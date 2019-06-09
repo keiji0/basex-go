@@ -2,8 +2,9 @@ package basex
 
 import (
 	"bytes"
-	"fmt"
 	"math/big"
+
+	"github.com/pkg/errors"
 )
 
 // Encoder は符号化/復号化するためのタイプになります
@@ -15,7 +16,7 @@ type Encoder struct {
 // NewEncoder は指定した符号列にEncodeするためのEncoderを生成します
 func NewEncoder(chars string) (*Encoder, error) {
 	if len(chars) < 2 {
-		return nil, fmt.Errorf("符号文字は1文字以上指定してください")
+		return nil, errors.Errorf("符号文字は1文字以上指定してください")
 	}
 	encoder := &Encoder{}
 
@@ -89,7 +90,7 @@ func (encoder *Encoder) Decode(encoded string) ([]byte, error) {
 	for _, c := range src[startIdx:] {
 		charIdx, ok := encoder.demap[c]
 		if !ok {
-			return nil, fmt.Errorf("復号化できない文字がふくまれています: %v", c)
+			return nil, errors.Errorf("復号化できない文字がふくまれています: %v", c)
 		}
 		num.Add(num.Mul(num, div), big.NewInt(charIdx))
 	}
